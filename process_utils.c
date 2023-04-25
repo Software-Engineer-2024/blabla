@@ -1,6 +1,11 @@
 #include "general.h"
 
-
+/**
+ * get_proc_count - returns the number of processes in a certain job
+ * @id: job id
+ * @filter: filer for process
+ * Return: count
+ */
 int get_proc_count(int id, int filter)
 {
 	struct process *proc;
@@ -25,7 +30,11 @@ int get_proc_count(int id, int filter)
 	return (count);
 }
 
-
+/**
+ * print_processes_of_job - prints processes of a certain job
+ * @id: job id
+ * Return: 0 if successful , -1 otherwise
+ */
 int print_processes_of_job(int id)
 {
 	struct process *proc;
@@ -47,7 +56,12 @@ int print_processes_of_job(int id)
 	return (0);
 }
 
-
+/**
+ * set_process_status - sets process status
+ * @pid: process id
+ * @status: status to be added to the process
+ * Return: 0 if successful , -1 otherwise
+ */
 int set_process_status(int pid, int status)
 {
 	int i;
@@ -73,7 +87,11 @@ int set_process_status(int pid, int status)
 	return (-1);
 }
 
-
+/**
+ * wait_for_pid - waits for process id
+ * @pid: process id
+ * Return: status
+ */
 int wait_for_pid(int pid)
 {
 	int status = 0;
@@ -96,8 +114,12 @@ int wait_for_pid(int pid)
 	return (status);
 }
 
-
-void check_zombie()
+/**
+ * check_zombie - checks for a zombie process
+ * which finished execution but still in process table
+ * Return: void
+ */
+void check_zombie(void)
 {
 	int status, pid = 0;
 	int job_id = get_job_id_by_pid(pid);

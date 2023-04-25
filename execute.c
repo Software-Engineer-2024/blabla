@@ -1,7 +1,12 @@
 #include "general.h"
+/**
+ * sigint_handler - ignore signal action
+ * @sig: input signal
+ * Return: void
+ */
 void sigint_handler(int sig)
 {
-    printf("\n");
+	printf("\n");
 	if (sig == 0)
 	{
 	}

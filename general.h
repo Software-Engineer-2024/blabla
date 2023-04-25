@@ -136,7 +136,8 @@ struct process *mysh_parse_command_segment(char *segment);
 
 /* shell_launch.c */
 int mysh_launch_job(struct job *job);
-int mysh_launch_process(struct job *job, struct process *proc, int in_fd, int out_fd, int mode);
+int mysh_launch_process(struct job *job,
+		struct process *proc, int in_fd, int out_fd, int mode);
 int release_job(int id);
 
 /* execute.c */

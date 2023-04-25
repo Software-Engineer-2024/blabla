@@ -1,5 +1,8 @@
 #include "general.h"
-
+/**
+ * mysh_init - initialization of shell
+ * Return: void
+ */
 void mysh_init(void)
 {
 	int pid = 0;
@@ -11,9 +14,9 @@ void mysh_init(void)
 
 
 	sigint_action.sa_handler = sigint_handler;
-    sigemptyset(&sigint_action.sa_mask);
+	sigemptyset(&sigint_action.sa_mask);
 	sigint_action.sa_flags = 0;
-    sigaction(SIGINT, &sigint_action, NULL);
+	sigaction(SIGINT, &sigint_action, NULL);
 
 
 	signal(SIGQUIT, SIG_IGN);
@@ -37,7 +40,10 @@ void mysh_init(void)
 
 	mysh_update_cwd_info();
 }
-
+/**
+ * mysh_update_cwd_info - updates current working directory info
+ * Return: 0 if successful , -1 otherwise
+ */
 void mysh_update_cwd_info(void)
 {
 	struct shell_info *shell = get_shell_info();
@@ -45,7 +51,10 @@ void mysh_update_cwd_info(void)
 	getcwd(shell->cur_dir, sizeof(shell->cur_dir));
 }
 
-
+/**
+ * mysh_read_line - reads input turning it to char array
+ * Return: buffer
+ */
 char *mysh_read_line(void)
 {
 	int bufsize = COMMAND_BUFSIZE;
@@ -86,7 +95,10 @@ char *mysh_read_line(void)
 		}
 	}
 }
-
+/**
+ * mysh_print_promt - prints promt before a command
+ * Return: void
+ */
 void mysh_print_promt(void)
 {
 	printf("$ ");
