@@ -1,6 +1,11 @@
 #include "general.h"
 
-
+/**
+ * mysh_fg -  removes job's process ID from list of those known by shell
+ * @argc: number of arguments entered on the command line when program started
+ * @argv: array of pointers to arrays of character objects
+ * Return: 0 if successful , -1 otherwise
+ */
 int mysh_fg(int argc, char **argv)
 {
 	pid_t pid;
@@ -9,7 +14,7 @@ int mysh_fg(int argc, char **argv)
 	if (argc < 2)
 	{
 		printf("usage: fg <pid>\n");
-		return -1;
+		return (-1);
 	}
 
 	if (argv[1][0] == '%')
@@ -19,45 +24,37 @@ int mysh_fg(int argc, char **argv)
 		if (pid < 0)
 		{
 			printf("./hsh: fg %s: no such job\n", argv[1]);
-			return -1;
+			return (-1);
 		}
 	}
 	else
-	{
 		pid = atoi(argv[1]);
-	}
-
 	if (kill(-pid, SIGCONT) < 0)
 	{
 		printf("./hsh: fg %d: job not found\n", pid);
-		return -1;
+		return (-1);
 	}
-
 	tcsetpgrp(0, pid);
-
 	if (job_id > 0)
 	{
 		set_job_status(job_id, STATUS_CONTINUED);
 		print_job_status(job_id);
 		if (wait_for_job(job_id) >= 0)
-		{
 			remove_job(job_id);
-		}
 	}
 	else
-	{
 		wait_for_pid(pid);
-	}
-
 	signal(SIGTTOU, SIG_IGN);
 	tcsetpgrp(0, getpid());
 	signal(SIGTTOU, SIG_DFL);
-
-	return 0;
+	return (0);
 }
 
-
-int mysh_jobs()
+/**
+ * mysh_jobs - shell job status printer
+ * Return: 0
+ */
+int mysh_jobs(void)
 {
 	int i;
 	struct shell_info *shell = get_shell_info();
@@ -70,8 +67,13 @@ int mysh_jobs()
 		}
 	}
 
-	return 0;
+	return (0);
 }
+/**
+ * helper_strtrim - trims white spaces from front and end of input
+ * @line: input to shell
+ * Return: head
+ */
 
 char *helper_strtrim(char *line)
 {
@@ -87,10 +89,13 @@ char *helper_strtrim(char *line)
 	}
 	*(tail + 1) = '\0';
 
-	return head;
+	return (head);
 }
-
-void mysh_loop()
+/**
+ * mysh_loop - main loop for shell
+ * Return: void
+ */
+void mysh_loop(void)
 {
 	char *line;
 	struct job *job;
@@ -99,7 +104,6 @@ void mysh_loop()
 
 	while (1)
 	{
-		
 		mysh_print_promt();
 		line = mysh_read_line();
 		if (strlen(line) == 0)
