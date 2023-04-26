@@ -1,25 +1,11 @@
 #include "general.h"
-
-int mysh_launch_process(struct job *job, struct process *proc,
-		int in_fd, int out_fd, int mode)
+/**
+ * child_pid_eq_zero - helper for the mysh_launch_process function
+ * Return: void
+ */
+void child_pid_eq_zero(void)
 {
-	pid_t childpid;
-	int status = 0;
-
-	proc->status = STATUS_RUNNING;
-	if (proc->type != COMMAND_EXTERNAL && mysh_execute_builtin_command(proc))
-	{
-		return (0);
-	}
-	childpid = fork();
-
-	if (childpid < 0)
-	{
-		return (-1);
-	}
-	else if (childpid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		signal(SIGTSTP, SIG_DFL);
 		signal(SIGTTIN, SIG_DFL);
@@ -56,14 +42,38 @@ int mysh_launch_process(struct job *job, struct process *proc,
 		}
 
 		exit(0);
+}
+/**
+ * mysh_launch_process - launches process
+ * @job: job
+ * @proc: process
+ * @in_fd: input file directory
+ * @out_fd: output file directory
+ * @mode: mode
+ * Return: status if successful , -1 if failed
+ */
+int mysh_launch_process(struct job *job, struct process *proc,
+		int in_fd, int out_fd, int mode)
+{
+	pid_t childpid;
+	int status = 0;
+
+	proc->status = STATUS_RUNNING;
+	if (proc->type != COMMAND_EXTERNAL && mysh_execute_builtin_command(proc))
+	{
+		return (0);
 	}
+	childpid = fork();
+
+	if (childpid < 0)
+		return (-1);
+	else if (childpid == 0)
+		child_pid_eq_zero();
 	else
 	{
 		proc->pid = childpid;
 		if (job->pgid > 0)
-		{
 			setpgid(childpid, job->pgid);
-		}
 		else
 		{
 			job->pgid = proc->pid;
