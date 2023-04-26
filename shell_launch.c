@@ -1,15 +1,17 @@
 #include "general.h"
-
-int mysh_launch_job(struct job *job)
+/**
+ * launch_job - helper for the my_sh_launch function
+ * @job: job
+ * @proc: process
+ * @in_fd: input file directory
+ * @out_fd: output file directory
+ * Return: status if successful , -1 if failed
+ */
+int launch_job(struct job *job, struct process *proc,
+		int in_fd, int out_fd)
 {
-	struct process *proc;
-	int status = 0, in_fd = 0, fd[2], job_id = -1;
-	int count = 0;
+	int status = 0;
 
-	check_zombie();
-	if (job->root->type == COMMAND_EXTERNAL)
-		job_id = insert_job(job);
-	count = job->command_count;
 	for (proc = job->root; proc != NULL; proc = proc->next)
 	{
 		if (proc == job->root && proc->input_path != NULL)
@@ -21,7 +23,8 @@ int mysh_launch_job(struct job *job)
 						count, proc->input_path);
 				remove_job(job_id);
 				return (-1);
-			}}
+			}
+		}
 		if (proc->next != NULL)
 		{
 			pipe(fd);
@@ -39,7 +42,27 @@ int mysh_launch_job(struct job *job)
 				if (out_fd < 0)
 					out_fd = 1;
 			} status = mysh_launch_process(job, proc, in_fd, out_fd, job->mode);
-		}}
+		}
+	}
+	return (status);
+}
+/**
+ * mysh_launch_job - launches job
+ * @job: job
+ * Return: status
+ */
+int mysh_launch_job(struct job *job)
+{
+	struct process *proc;
+	int status = 0, in_fd = 0, fd[2], job_id = -1;
+	int count = 0;
+
+	check_zombie();
+	if (job->root->type == COMMAND_EXTERNAL)
+		job_id = insert_job(job);
+	count = job->command_count;
+	status = launch_job(job, proc, in_fd, out_fd);
+
 	if (job->root->type == COMMAND_EXTERNAL)
 	{
 		if (status >= 0 && job->mode == FOREGROUND_EXECUTION)
