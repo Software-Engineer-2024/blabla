@@ -1,16 +1,16 @@
 #include "general.h"
 /**
- * launch_job - helper for the my_sh_launch function
+ * launch_job - helper for the mysh_launch_job function
  * @job: job
- * @proc: process
  * @in_fd: input file directory
- * @out_fd: output file directory
+ * @count: count
+ * @job_id : job id
  * Return: status if successful , -1 if failed
  */
-int launch_job(struct job *job, struct process *proc,
-		int in_fd, int out_fd)
+int launch_job(struct job *job, int in_fd, int count, int job_id)
 {
-	int status = 0;
+	int status = 0, fd[2];
+	struct process *proc;
 
 	for (proc = job->root; proc != NULL; proc = proc->next)
 	{
@@ -53,15 +53,14 @@ int launch_job(struct job *job, struct process *proc,
  */
 int mysh_launch_job(struct job *job)
 {
-	struct process *proc;
-	int status = 0, in_fd = 0, fd[2], job_id = -1;
+	int status = 0, in_fd = 0, job_id = -1;
 	int count = 0;
 
 	check_zombie();
 	if (job->root->type == COMMAND_EXTERNAL)
 		job_id = insert_job(job);
 	count = job->command_count;
-	status = launch_job(job, proc, in_fd, out_fd);
+	status = launch_job(job, in_fd, count, job_id);
 
 	if (job->root->type == COMMAND_EXTERNAL)
 	{

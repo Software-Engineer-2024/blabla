@@ -1,9 +1,14 @@
 #include "general.h"
 /**
  * child_pid_eq_zero - helper for the mysh_launch_process function
+ * @job : job
+ * @proc: process
+ * @in_fd: input file directory
+ * @out_fd: output file directory
  * Return: void
  */
-void child_pid_eq_zero(void)
+void child_pid_eq_zero(struct job *job, struct process *proc,
+			int in_fd, int out_fd)
 {
 	signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
@@ -68,7 +73,7 @@ int mysh_launch_process(struct job *job, struct process *proc,
 	if (childpid < 0)
 		return (-1);
 	else if (childpid == 0)
-		child_pid_eq_zero();
+		child_pid_eq_zero(job, proc, in_fd, out_fd);
 	else
 	{
 		proc->pid = childpid;
